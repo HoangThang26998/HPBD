@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<meta charset='UTF-8' />
+<meta content='width=device-width, initial-scale=1, user-scalable=1, minimum-scale=1, maximum-scale=5' name='viewport' />
+<meta content='IE=edge' http-equiv='X-UA-Compatible' />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Antique:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="https://feeldreams.github.io/heibuka/style.css" rel="stylesheet" type="text/css" />
+<script src="https://unpkg.com/typeit@8.7.0/dist/index.umd.js"></script>
+
+<head>
+    <title>Happy Birthday</title>
+    <link rel="icon" type="image/x-icon" href="https://www.palingit.com/favicon.ico">
+    <style>
+        #nextPageBtn {
+            display: none; /* Ban đầu ẩn */
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Shippori Antique', sans-serif;
+            font-size: 16px;
+            pointer-events: auto;
+            z-index: 100; /* Đảm bảo nút ở trên cùng */
+            position: relative; /* Đảm bảo nút không bị che bởi position:absolute của blockquote */
+        }
+    </style>
+</head>
+
+<body>
+    <iframe id="ytplayer" 
+            style="position: absolute; width: 1px; height: 1px; left: -9999px; top: -9999px;" 
+            frameborder="0" allow="autoplay" allowfullscreen></iframe>
+    <!-- Ganti Audio di đây -->
+    <audio src="" id="linkmp3" class="sembunyi"></audio>
+
+    <div id="bodyblur">
+        <!-- Wallpaper --><img src="image.png" id="wallpaper" />
+        <div id="beneranblur"></div>
+    </div>
+
+    <div id='Content'>
+
+        <div id="kadoIn">
+            <!-- Tombol Surat --><img src="https://feeldreams.github.io/kadoin.png" />
+        </div>
+        <p id="ket">Bấm vào cái hộp quà nàyyy</p>
+
+        <div class="kumpulanstiker">
+            <!-- Stiker cho Konten -->
+            <img src="https://feeldreams.github.io/peach6.gif" id="fotostiker" />
+            <img src="https://feeldreams.github.io/bunga.gif" id="fotostiker1" />
+            <img src="https://feeldreams.github.io/pandacoklat.gif" id="fotostiker2" />
+            <img src="https://feeldreams.github.io/gumush.gif" id="fotostiker3" />
+            <img src="https://feeldreams.github.io/emawh.gif" id="fotostiker4" />
+            <img src="https://feeldreams.github.io/pandacoklat.gif" id="fotostiker5" />
+        </div>
+
+        <p id="halo" class="halo"></p>
+
+        <div>
+            <blockquote id='bq' data-text='㋡'>
+                <p id="kalimat">Anh có cái này gửi em :3</p>
+
+                <!-- Pesan -->
+                <p id="pesan1">Bấm vào hết mấy cái trái tim nè :v</p>
+                <div id="kolombaru">
+                    <li id="lv1">❤️</li>
+                    <li id="lv2">❤️</li>
+                    <li id="lv3">❤️</li>
+                    <li id="lv4">❤️</li>
+                </div>
+
+                <p id="pesan2">Đúng rồiii 🥳</p>
+                <p id="pesan3">mở đầu</p>
+                <p id="pesan4" class="sty2">Happy ...</p>
+                <p id="pesan6" class="sty2">
+                    lời nói đầu
+                    <br><br>nội dung 1
+                    <br><br>nội dung 2
+                    <br><br>nội dung 3
+                    <br><br>nội dung 4
+                    <3</p>
+                <p id="pesan5" class="sty2">Hehe <br></p>
+
+                <!-- Tombol Lanjut -->
+                <p id="opsL">NPV</p>
+                <button id="nextPageBtn">Bất ngờ ở đây nữa này!!!</button>     
+            </blockquote>
+        </div>
+
+        <!-- Tombol Kirim Pesan -->
+        <div id="" style="display: none;">
+            <a id="By"></a>
+        </div>
+
+    </div>
+
+    <!-- Script chính -->
+    <script src="script.js"></script>
+    <script>
+        const body = document.querySelector("body");
+        const swalst = Swal.mixin({
+            timer: 2300,
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            timerProgressBar: true,
+            imageHeight: 90,
+        });
+        audio = new Audio('' + linkmp3.src);
+        ftganti = 0;
+        fungsi = 0;
+        fungsiAwal = 0;
+        deffotostiker = fotostiker.src;
+        Content.style = "opacity:1;margin-top:16vh";
+        const swals = Swal.mixin({
+            allowOutsideClick: false,
+            cancelButtonColor: '#FF0040',
+            imageHeight: 80,
+        });
+
+        document.getElementById("kadoIn").onclick = function() {
+            if (fungsiAwal == 0) {
+                // Phát nhạc từ YouTube
+                document.getElementById("ytplayer").src = 
+                    "https://www.youtube.com/embed/Og25tNifNSs?autoplay=1&loop=1&playlist=Og25tNifNSs&start=1";
+                fungsiAwal = 1;
+                kadoIn.style = "transition:all .8s ease;transform:scale(10);opacity:0";
+                wallpaper.style = "transform: scale(1.5);";
+                ket.style = "display:none";
+                setTimeout(initengahan, 300);
+                setTimeout(inipesan, 500);
+            }
+        }
+
+        // Fix for jQuery-dependent textGenerate
+        function textGenerate() {
+            try {
+                var n = "";
+                var text = " test ";
+                var a = Array.from(text);
+                var textVal = $('#txtReason').val() || "";
+                var count = textVal.length;
+                if (count > 0) {
+                    for (let i = 1; i <= count; i++) {
+                        n = n + a[i];
+                        if (i == text.length + 1) {
+                            $('#txtReason').val("");
+                            n = "";
+                            break;
+                        }
+                    }
+                }
+                $('#txtReason').val(n);
+                setTimeout(textGenerate, 1);
+            } catch (e) {
+                console.warn("textGenerate error:", e.message);
+                // Skip textGenerate if input doesn't exist
+            }
+        }
+
+        async function inipesan() {
+            try {
+                var { value: nama } = await swals.fire({
+                    title: 'Nhập tên của em',
+                    input: 'text',
+                });
+
+                if (nama && nama.length < 11 && nama === "test") {
+                    window.nama = nama;
+                    vketikhalo = "Chào " + nama + " ✨❤️";
+                    mulainama();
+                } else {
+                    await swals.fire('Sai!', 'Tên em là test, đừng có nhập linh tinh ><');
+                    inipesan();
+                }
+            } catch (e) {
+                console.error("inipesan error:", e.message);
+            }
+        }
+
+        // Add event listener for the next page button with debug
+        document.getElementById("nextPageBtn").addEventListener("click", function() {
+            try {
+                console.log("Next page button clicked, redirecting to nextpage.html");
+                window.location.href = "heart.html"; // Replace with your desired HTML page
+            } catch (e) {
+                console.error("Navigation error:", e.message);
+            }
+        });
+
+        // Fallback to ensure button displays if tombol() fails
+        setTimeout(() => {
+            if (fungsi === 0) {
+                document.getElementById("nextPageBtn").style = "opacity:1;transform:scale(1);display:block;margin-top:20px;pointer-events:auto;z-index:100;";
+                console.log("Fallback: Button displayed after 10s");
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
