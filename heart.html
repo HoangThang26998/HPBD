@@ -243,23 +243,44 @@
 
             // Tạo điểm sáng như tuyết rơi
             function createSnowParticle() {
+                // Hình cầu nhỏ làm hạt tuyết chính
                 const geometry = new THREE.SphereGeometry(0.02, 8, 8);
-                const material = new THREE.MeshBasicMaterial({
-                    color: 0xffffff,
+                const material = new THREE.MeshStandardMaterial({
+                    color: 0xf845dd,
+                    emissive: 0x88ccff,
+                    emissiveIntensity: 0.6,
                     transparent: true,
-                    opacity: 0.8
+                    opacity: 0.9,
+                    roughness: 0.3,
+                    metalness: 0.1
                 });
                 const particle = new THREE.Mesh(geometry, material);
-                
-                // Vị trí ngẫu nhiên ở trên cao
+
+                // Hình cầu lớn hơn làm viền sáng (glow)
+                const glowGeometry = new THREE.SphereGeometry(0.04, 8, 8);
+                const glowMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xff66cc,  // màu hồng viền
+                    transparent: true,
+                    opacity: 0.4,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false,   // tránh lỗi hiển thị
+                    side: THREE.FrontSide
+                });
+                const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
+
+                // Thêm glowMesh làm con để viền theo hạt tuyết
+                particle.add(glowMesh);
+
+                // Đặt vị trí hạt tuyết
                 particle.position.set(
                     (Math.random() - 0.5) * 20,
                     8 + Math.random() * 5,
                     (Math.random() - 0.5) * 20
                 );
-                
+
                 return particle;
             }
+
 
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
