@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
-    <title>Heart Interaction</title>
+    <title>Love You</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <style>
@@ -54,6 +54,10 @@
             height: 100vh;
             opacity: 0;
             transition: opacity 1.5s ease;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10000;
         }
     </style>
 </head>
@@ -70,7 +74,7 @@
 
     <canvas id="pinkboard"></canvas>
 
-    <audio id="bgMusic" src="music2.mp3" loop></audio>
+    <audio id="bgMusic" src="music2.mp3" loop preload="auto"></audio>
 
     <!-- Import thư viện Three.js -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
@@ -85,23 +89,29 @@
 
         let clickedCount = 0;
 
+        // Load nhạc ngay khi trang load xong để tránh delay khi play lần đầu
+        window.addEventListener('load', () => {
+            music.load();
+        });
+
         function playMusicOnce() {
-            music.play().catch(() => {
-                console.warn("Không thể play nhạc ngay, chờ tương tác...");
-            });
+            if (music.paused) {
+                music.play().catch(() => {
+                    console.warn("Không thể play nhạc ngay, chờ tương tác...");
+                });
+            }
         }
+
         function animateDisappear(btn) {
+            // (Giữ nguyên đoạn animateDisappear như bạn đã có)
             const rect = btn.getBoundingClientRect();
 
-            // Tạo bản sao của nút btn
             const clone = btn.cloneNode(true);
             document.body.appendChild(clone);
 
-            // Lấy kích thước thật của font-size từ CSS
             const computedStyle = getComputedStyle(btn);
             const fontSize = computedStyle.fontSize;
 
-            // Gán lại font-size và các thuộc tính vị trí
             clone.style.position = 'fixed';
             clone.style.top = rect.top + 'px';
             clone.style.left = rect.left + 'px';
@@ -109,11 +119,10 @@
             clone.style.zIndex = 1000;
             clone.style.fontSize = fontSize;
             clone.style.transition = 'transform 0.2s';
+            clone.style.pointerEvents = 'none';
 
-            // Ẩn nút gốc
             btn.style.visibility = 'hidden';
 
-            // Biến trạng thái vật lý
             let posX = rect.left;
             let posY = rect.top;
             let velocityY = 0;
@@ -153,28 +162,26 @@
             anim();
         }
 
-        heartButtons.forEach((btn, idx) => {
+        heartButtons.forEach((btn) => {
             btn.addEventListener('click', () => {
                 clickedCount++;
+
                 if (clickedCount === 1) {
-                    playMusicOnce(); // bấm trái tim đầu tiên => phát nhạc
+                    playMusicOnce();
                 }
 
                 animateDisappear(btn);
 
                 if (clickedCount === heartButtons.length) {
-                    // Ẩn phần nút và thông báo (chỉ ẩn phần chứa để tránh lỗi vị trí khi animation chạy)
-                    // Nhưng vì animation đã dùng position fixed nên có thể ẩn luôn
                     buttonsContainer.style.display = 'none';
                     message.style.display = 'none';
 
-                    // Hiện canvas trái tim 3D từ từ (fade-in)
                     canvas.style.display = 'block';
                     canvas.style.opacity = 0;
 
                     let opacity = 0;
-                    const fadeDuration = 1500; // ms
-                    const fadeStep = 50; // ms
+                    const fadeDuration = 1500;
+                    const fadeStep = 50;
                     const increment = fadeStep / fadeDuration;
 
                     const fadeInterval = setInterval(() => {
@@ -200,7 +207,7 @@
                 precision: "highp",
             });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setClearColor(0x000000);
+            renderer.setClearColor(0x000000, 0);
             renderer.setPixelRatio(window.devicePixelRatio);
 
             const words = ["love", "you", "forever", "❤️", "💖", "💘", "💝", "💞", "💕"];
@@ -221,6 +228,9 @@
                 context.fillText(message, canvas.width / 2, canvas.height / 2);
 
                 const texture = new THREE.CanvasTexture(canvas);
+                texture.minFilter = THREE.LinearFilter;
+                texture.generateMipmaps = false;
+
                 const spriteMaterial = new THREE.SpriteMaterial({
                     map: texture,
                     transparent: true
@@ -229,6 +239,26 @@
                 const sprite = new THREE.Sprite(spriteMaterial);
                 sprite.scale.set(0.5, 0.25, 1);
                 return sprite;
+            }
+
+            // Tạo điểm sáng như tuyết rơi
+            function createSnowParticle() {
+                const geometry = new THREE.SphereGeometry(0.02, 8, 8);
+                const material = new THREE.MeshBasicMaterial({
+                    color: 0xffffff,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                const particle = new THREE.Mesh(geometry, material);
+                
+                // Vị trí ngẫu nhiên ở trên cao
+                particle.position.set(
+                    (Math.random() - 0.5) * 20,
+                    8 + Math.random() * 5,
+                    (Math.random() - 0.5) * 20
+                );
+                
+                return particle;
             }
 
             const scene = new THREE.Scene();
@@ -246,9 +276,10 @@
             pointLight.position.set(5, 5, 5);
             scene.add(pointLight);
 
-            const particlesCount = 500;
+            const particlesCount = 300;
             const sprites = [];
 
+            // Tạo các sprites text trái tim
             for (let i = 0; i < particlesCount; i++) {
                 const t = Math.PI - 2 * Math.PI * Math.random();
                 const x = 1.5 * Math.pow(Math.sin(t), 3);
@@ -266,9 +297,31 @@
                 sprites.push({ sprite, velocity, acceleration });
             }
 
+            // Tạo các điểm sáng như tuyết rơi
+            const snowParticles = [];
+            const snowCount = 100;
+
+            for (let i = 0; i < snowCount; i++) {
+                const particle = createSnowParticle();
+                scene.add(particle);
+                
+                const velocity = new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.01,
+                    -0.02 - Math.random() * 0.01,
+                    (Math.random() - 0.5) * 0.01
+                );
+                
+                snowParticles.push({ 
+                    particle, 
+                    velocity,
+                    originalOpacity: 0.8
+                });
+            }
+
             function animate() {
                 requestAnimationFrame(animate);
 
+                // Animate text sprites
                 for (let i = 0; i < sprites.length; i++) {
                     const s = sprites[i];
                     s.velocity.add(s.acceleration);
@@ -286,7 +339,35 @@
                             (Math.random() - 0.5) * 0.004,
                             (Math.random() - 0.5) * 0.004
                         );
-                        s.acceleration.copy(s.velocity).multiplyScalar(-0.008);
+                        s.acceleration.copy(s.velocity).multiplyScalar(-0.013);
+                    }
+                }
+
+                // Animate snow particles
+                for (let i = 0; i < snowParticles.length; i++) {
+                    const snow = snowParticles[i];
+                    snow.particle.position.add(snow.velocity);
+                    
+                    // Xoay nhẹ để tạo hiệu ứng lấp lánh
+                    snow.particle.rotation.x += 0.01;
+                    snow.particle.rotation.y += 0.01;
+                    
+                    // Hiệu ứng trong suốt thay đổi để tạo lấp lánh
+                    const time = Date.now() * 0.005;
+                    snow.particle.material.opacity = snow.originalOpacity + Math.sin(time + i) * 0.3;
+                    
+                    // Reset particle khi rơi xuống dưới
+                    if (snow.particle.position.y < -8) {
+                        snow.particle.position.set(
+                            (Math.random() - 0.5) * 20,
+                            8 + Math.random() * 5,
+                            (Math.random() - 0.5) * 20
+                        );
+                        snow.velocity.set(
+                            (Math.random() - 0.5) * 0.01,
+                            -0.02 - Math.random() * 0.01,
+                            (Math.random() - 0.5) * 0.01
+                        );
                     }
                 }
 
@@ -296,7 +377,7 @@
 
             animate();
 
-            window.addEventListener("resize", () => {
+            window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);

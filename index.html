@@ -37,11 +37,9 @@
 </head>
 
 <body>
-    <iframe id="ytplayer" 
-            style="position: absolute; width: 1px; height: 1px; left: -9999px; top: -9999px;" 
-            frameborder="0" allow="autoplay" allowfullscreen></iframe>
     <!-- Ganti Audio di đây -->
     <audio src="" id="linkmp3" class="sembunyi"></audio>
+    <audio id="bgMusic" src="music1.mp3" loop></audio>
 
     <div id="bodyblur">
         <!-- Wallpaper --><img src="image.png" id="wallpaper" />
@@ -131,8 +129,7 @@
         document.getElementById("kadoIn").onclick = function() {
             if (fungsiAwal == 0) {
                 // Phát nhạc từ YouTube
-                document.getElementById("ytplayer").src = 
-                    "https://www.youtube.com/embed/Og25tNifNSs?autoplay=1&loop=1&playlist=Og25tNifNSs&start=1";
+                document.getElementById("bgMusic").play();
                 fungsiAwal = 1;
                 kadoIn.style = "transition:all .8s ease;transform:scale(10);opacity:0";
                 wallpaper.style = "transform: scale(1.5);";
